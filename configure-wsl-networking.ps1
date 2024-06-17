@@ -1,13 +1,13 @@
 ########### Configuration Parameters
 
 $vpn_interface_desc = "PANGP Virtual Ethernet Adapter"
-$wsl_interface_name = "vEthernet (WSL)"
 $wsl_interface_id   = "eth0"
+$wsl_interface_names = @("vEthernet (WSL)", "Ethernet 5")
 
 $config_default_wsl_guest = 1 # 0: False, 1: True
-$wsl_guest_list = @()
+$wsl_guest_list = @("Ubuntu-24.04")
 
-$state_file = "$HOME\wsl-added-routes.txt"
+$state_file = "$HOME\WSL2\vpn_state\wsl2_vpn_state.txt"
 
 ########### End Configuration Parameters
 
@@ -36,7 +36,15 @@ if ($vpn_state -eq "Up") {
 
     # Get key metrics for the WSL Network Interface
     echo "Determining WSL2 Interface parameters ..."
-    $wsl_interface_index = (Get-NetAdapter -IncludeHidden -Name "$wsl_interface_name" | select -ExpandProperty ifIndex)
+    $wsl_interface_index = $null
+    foreach ($interface_name in $wsl_interface_names) {
+        try {
+            $wsl_interface_index = (Get-NetAdapter -IncludeHidden -Name $interface_name | Select-Object -ExpandProperty ifIndex)
+            break
+        } catch {
+            continue
+        }
+    }
     echo "[DEBUG] WSL2 Interface Parameters: Index = $wsl_interface_index"
 
     echo "Determining VPN Interface parameters ..."
