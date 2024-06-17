@@ -8,6 +8,17 @@ This Powershell script is designed to specifically address this issue when using
 GlobalProtect VPN client. It can be configured to run automatically on network interface
 change where it will reconfigure the Windows systems routes to fix WSL2 networking.
 
+## Easier execution
+For easier script execution you can add the following function to your Powershell profile
+(`$PROFILE` variable) to allow you to run the script by simply typing `Set-WSLNetworking`.
+
+Below example assumes that you have cloned the repository to `$env:USERPROFILE\WSL2\wsl2-vpn-support`.
+
+```powershell
+function Set-WSLNetworking {
+    powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\WSL2\wsl2-vpn-support\configure-wsl-networking.ps1"
+}
+```
 ## Why is this script different?
 
 Most other solutions on the internet involve setting the Interface Metric of the VPN
